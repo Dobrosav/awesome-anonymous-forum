@@ -11,13 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Iterator;
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
 public class PostController {
 
     private final PostOperationsService postOperationsService;
-
 
     @Autowired
     public PostController(PostOperationsService postOperationsService) {
@@ -35,7 +35,7 @@ public class PostController {
     }
 
     @GetMapping("by-author/{authorName}")
-    public ResponseEntity getPostByAuthor(@PathVariable String authorName) {
+    public ResponseEntity<ApiResponseWrapper<List>> getPostByAuthor(@PathVariable String authorName) {
         return new ResponseEntity<>(new ApiResponseWrapper<>(postOperationsService.getAllPostByAuthor(authorName)), HttpStatus.OK);
     }
 }
