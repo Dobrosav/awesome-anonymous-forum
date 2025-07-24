@@ -1,9 +1,11 @@
 package com.thereputeo.awesomeanonymousforum.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "posts")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Post {
 
     @Id
@@ -36,7 +38,7 @@ public class Post {
     private String audio;
 
     @Lob
-    @Column(name="author_name")
+    @Column(name = "author_name", nullable = false)
     private String authorName;
 
     public Post() {

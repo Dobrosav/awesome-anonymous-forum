@@ -1,4 +1,4 @@
-package com.thereputeo.awesomeanonymousforum.api.model;
+package com.thereputeo.awesomeanonymousforum.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

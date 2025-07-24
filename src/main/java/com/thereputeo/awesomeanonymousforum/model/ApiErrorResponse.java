@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiErrorResponse {
+    private String code;
 
-    String code;
-    String message;
+    private String message;
+
+    public ApiErrorResponse() {
+    }
 
     public ApiErrorResponse(String code, String message) {
         this.code = code;
@@ -27,5 +30,9 @@ public class ApiErrorResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String toString() {
+        return "ApiErrorResponse{code='" + this.code + "', message='" + this.message + "'}";
     }
 }

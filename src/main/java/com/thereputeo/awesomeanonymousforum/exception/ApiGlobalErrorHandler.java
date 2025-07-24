@@ -1,7 +1,7 @@
 package com.thereputeo.awesomeanonymousforum.exception;
 
-import com.thereputeo.awesomeanonymousforum.api.model.ApiErrorResponse;
-import com.thereputeo.awesomeanonymousforum.api.model.ApiResponseWrapper;
+import com.thereputeo.awesomeanonymousforum.model.ApiErrorResponse;
+import com.thereputeo.awesomeanonymousforum.model.ApiResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -74,11 +74,12 @@ public class ApiGlobalErrorHandler {
         LOG.error("Occurred unexpected error", ex);
         return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001" + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage()));
     }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     protected ApiResponseWrapper handleException(Exception ex) {
         LOG.error("Occurred unexpected error", ex);
-        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001 "+ "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage()));
+        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001 " + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage()));
     }
 }

@@ -1,6 +1,6 @@
 package com.thereputeo.awesomeanonymousforum.client.whoa;
 
-import com.thereputeo.awesomeanonymousforum.client.whoa.model.WhoaClientResponse;
+import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
 import com.thereputeo.awesomeanonymousforum.exception.ErrorType;
 import com.thereputeo.awesomeanonymousforum.exception.ServiceException;
 import org.slf4j.Logger;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import retrofit2.Call;
 import retrofit2.Response;
 
-
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public class WhoaService {
@@ -27,17 +27,17 @@ public class WhoaService {
         this.whoabInterface = whoanterface;
     }
 
-    public WhoaClientResponse getMovie() {
-        Call<WhoaClientResponse> serviceCall = whoabInterface.getRandomWhoaMovie();
-        Response<WhoaClientResponse> response = null;
+    public List<MovieDetail> getMovie() {
+        Call<List<MovieDetail>> serviceCall = whoabInterface.getRandomWhoaMovie();
+        Response<List<MovieDetail>> response = null;
         try {
             response = serviceCall.execute();
 
             if (!response.isSuccessful()) {
-
+                log.error("Error while invoking whoa service:{}", response.errorBody());
             }
         } catch (IOException e) {
-            log.error("Error while invoking cpahub:{}", e.getMessage());
+            log.error("Error while invoking whoa service:{}", e.getMessage());
             throw new ServiceException(ErrorType.CLIENT_NOT_AVAILABLE, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         log.info("Successfully got whoa movie:{}", response.body());
