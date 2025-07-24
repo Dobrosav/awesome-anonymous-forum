@@ -1,11 +1,16 @@
 package com.thereputeo.awesomeanonymousforum;
 
+import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
+import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoaService;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoabInterface;
 import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
+import com.thereputeo.awesomeanonymousforum.database.entity.Comment;
 import com.thereputeo.awesomeanonymousforum.database.entity.Post;
+import com.thereputeo.awesomeanonymousforum.database.repository.CommentRepo;
 import com.thereputeo.awesomeanonymousforum.database.repository.PostRepo;
 import com.thereputeo.awesomeanonymousforum.exception.ServiceException;
+import com.thereputeo.awesomeanonymousforum.service.CommentService;
 import com.thereputeo.awesomeanonymousforum.service.PostOperationsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,9 +21,9 @@ import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,12 +42,17 @@ class AwesomeAnonymousForumApplicationTests {
     @Mock
     private WhoaService whoaService;
 
+    @Mock
+    private CommentRepo commentRepo;
+
     private PostOperationsService postOperationsService;
+    private CommentService commentService;
 
     @BeforeEach
     void setUp() {
         whoaService = new WhoaService(whoabInterface);
         postOperationsService = new PostOperationsService(postRepo, whoaService);
+        commentService = new CommentService(postRepo, commentRepo);
     }
 
     @Test
@@ -93,6 +103,15 @@ class AwesomeAnonymousForumApplicationTests {
         verify(postRepo).findByAuthorName(author);
     }
 
+
+    @Test
+    void createComment_PostNotFound() {
+        CommentDto commentDto = new CommentDto();
+        when(postRepo.findById(1)).thenReturn(Optional.empty());
+
+        assertThrows(ServiceException.class, () -> commentService.createCommentOnPost(1, commentDto));
+        verify(postRepo).findById(1);
+    }
 
 }
 
