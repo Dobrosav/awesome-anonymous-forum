@@ -33,7 +33,7 @@ public class CommentService {
         Post post = postRepo.findById(postId).orElse(null);
         if (post == null) {
             logger.warn("No post found for id:{}", postId);
-            throw new ServiceException(ErrorType.NOT_FOUND, HttpStatus.NOT_FOUND);
+            throw new ServiceException(ErrorType.NOT_FOUND_POST, HttpStatus.NOT_FOUND);
         }
         Comment comment = new Comment();
         comment.setParentComment(null);
@@ -60,8 +60,8 @@ public class CommentService {
         Result result = new Result();
         Comment parentcomment = commentRepo.findById(commentId).orElse(null);
         if (parentcomment == null) {
-            logger.warn("No parentcomment found for id:{}", commentId);
-            throw new ServiceException(ErrorType.NOT_FOUND, HttpStatus.NOT_FOUND);
+            logger.warn("No parent comment found for id:{}", commentId);
+            throw new ServiceException(ErrorType.NOT_FOUND_COMMENT, HttpStatus.NOT_FOUND);
         }
         Post post = parentcomment.getPost();
         Comment newComment = new Comment();

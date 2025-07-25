@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -65,7 +64,7 @@ public class PostOperationsService {
     }
 
     public Page<Post> getAllPost(int page, int size) {
-        logger.info("Getting all posts");
+        logger.info("Getting all posts on page:{} and size:{}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         return postRepo.findAll(pageable);
     }
@@ -75,7 +74,7 @@ public class PostOperationsService {
         List<Post> result = postRepo.findByAuthorName(authorName);
         if (result.isEmpty()) {
             logger.warn("No post found for author:{}", authorName);
-            throw new ServiceException(ErrorType.NOT_FOUND, HttpStatus.NOT_FOUND);
+            throw new ServiceException(ErrorType.NOT_FOUND_POST, HttpStatus.NOT_FOUND);
         }
         return result;
     }
