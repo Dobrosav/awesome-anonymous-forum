@@ -1,6 +1,8 @@
 package com.thereputeo.awesomeanonymousforum;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
+import com.thereputeo.awesomeanonymousforum.api.model.request.PostDto;
+import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoaService;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoabInterface;
 import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
@@ -8,23 +10,28 @@ import com.thereputeo.awesomeanonymousforum.database.entity.Post;
 import com.thereputeo.awesomeanonymousforum.database.repository.CommentRepo;
 import com.thereputeo.awesomeanonymousforum.database.repository.PostRepo;
 import com.thereputeo.awesomeanonymousforum.exception.ServiceException;
+import com.thereputeo.awesomeanonymousforum.model.PostType;
 import com.thereputeo.awesomeanonymousforum.service.CommentService;
 import com.thereputeo.awesomeanonymousforum.service.PostOperationsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 @SpringBootTest
 class AwesomeAnonymousForumApplicationTests {
@@ -92,6 +99,24 @@ class AwesomeAnonymousForumApplicationTests {
         assertEquals(posts, result);
         verify(postRepo).findByAuthorName(author);
     }
+    @Test
+    void shouldCreatePostSuccessfullyWithoutIncludeKeanuWhoa() {
+        PostDto postDto = new PostDto();
+        postDto.setContent("Amazing content");
+        postDto.setAuthorName("Author1");
+        postDto.setExternalLink("http://example.com");
+        postDto.setPostType(PostType.PLAIN_TEXT);
+        postDto.setIncludeKeanuWhoa(false);
+
+        Post mockPost = new Post();
+        when(postRepo.save(any(Post.class))).thenReturn(mockPost);
+
+        Result result = postOperationsService.createPost(postDto);
+
+        assertTrue(result.getSuccess());
+        assertEquals("Successfully saved post", result.getMessage());
+        verify(postRepo).save(any(Post.class));
+    }
 
     @Test
     void getPostsByAuthor_NotFound() {
@@ -101,7 +126,38 @@ class AwesomeAnonymousForumApplicationTests {
         assertThrows(ServiceException.class, () -> postOperationsService.getAllPostByAuthor(author));
         verify(postRepo).findByAuthorName(author);
     }
+    @Test
+    void testGetAllPost_EmptyResult() {
+        int page = 0;
+        int size = 10;
+        Pageable pageable = PageRequest.of(page, size);
 
+        when(postRepo.findAll(pageable)).thenReturn(Page.empty());
+
+        Page<Post> result = postOperationsService.getAllPost(page, size);
+
+        assertTrue(result.isEmpty(), "Result should have been empty.");
+        verify(postRepo, times(1)).findAll(pageable);
+    }
+
+    @Test
+    void testGetAllPost_WithResults() {
+        int page = 0;
+        int size = 10;
+        Pageable pageable = PageRequest.of(page, size);
+
+        Post post = new Post("Sample Post", "General", null, null, null, null, "Author");
+        List<Post> postList = Collections.singletonList(post);
+        Page<Post> postPage = new PageImpl<>(postList, pageable, postList.size());
+
+        when(postRepo.findAll(pageable)).thenReturn(postPage);
+
+        Page<Post> result = postOperationsService.getAllPost(page, size);
+
+        assertEquals(1, result.getTotalElements(), "Result should contain 1 element.");
+        assertEquals(post, result.getContent().get(0), "Retrieved post should match the expected post.");
+        verify(postRepo, times(1)).findAll(pageable);
+    }
 
     @Test
     void createComment_PostNotFound() {
