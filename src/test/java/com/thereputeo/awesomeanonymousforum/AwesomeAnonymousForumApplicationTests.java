@@ -6,6 +6,7 @@ import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoaService;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoabInterface;
 import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
+import com.thereputeo.awesomeanonymousforum.database.entity.Comment;
 import com.thereputeo.awesomeanonymousforum.database.entity.Post;
 import com.thereputeo.awesomeanonymousforum.database.repository.CommentRepo;
 import com.thereputeo.awesomeanonymousforum.database.repository.PostRepo;
@@ -166,6 +167,25 @@ class AwesomeAnonymousForumApplicationTests {
 
         assertThrows(ServiceException.class, () -> commentService.createCommentOnPost(1, commentDto));
         verify(postRepo).findById(1);
+    }
+    @Test
+    void createReplyOnComment_ShouldCreateReplySuccessfully() {
+        Integer parentCommentId = 1;
+        Comment parentComment = new Comment();
+        parentComment.setId(parentCommentId);
+        parentComment.setPost(new Post());
+        when(commentRepo.findById(parentCommentId)).thenReturn(Optional.of(parentComment));
+        when(commentRepo.save(any(Comment.class))).thenReturn(new Comment());
+
+        CommentDto replyDto = new CommentDto();
+        replyDto.setContent("This is a reply");
+        replyDto.setAuthorName("Author");
+
+        Result result = commentService.createReplyOnComment(parentCommentId, replyDto);
+
+        assertTrue(result.getSuccess());
+        assertEquals("Successfully created new reply on comment", result.getMessage());
+        verify(commentRepo, times(1)).save(any(Comment.class));
     }
 
 }
