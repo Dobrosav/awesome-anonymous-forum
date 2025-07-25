@@ -1,11 +1,9 @@
 package com.thereputeo.awesomeanonymousforum;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
-import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoaService;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoabInterface;
 import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
-import com.thereputeo.awesomeanonymousforum.database.entity.Comment;
 import com.thereputeo.awesomeanonymousforum.database.entity.Post;
 import com.thereputeo.awesomeanonymousforum.database.repository.CommentRepo;
 import com.thereputeo.awesomeanonymousforum.database.repository.PostRepo;
@@ -23,7 +21,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
