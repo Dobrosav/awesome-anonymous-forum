@@ -49,14 +49,15 @@ public class PostOperationsService {
             }
 
         }
-        result.setSuccess(true);
-        result.setMessage("Successfully saved post");
         if (postRepo.save(post) == null) {
             result.setSuccess(false);
             result.setMessage("Failed to save post");
             logger.error("Failed to save post with details: {}", postDto.toString().replace("\n", ""));
+        } else{
+            result.setSuccess(true);
+            result.setMessage("Successfully saved post");
+            logger.info("Successfully saved post with details: {}", postDto.toString().replace("\n", ""));
         }
-        logger.info("Successfully saved post with details: {}", postDto.toString().replace("\n", ""));
         return result;
     }
 
