@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface PostRepo extends CrudRepository<Post, Integer> {
     List<Post> findByAuthorName(String authorName);
+
     @Query("SELECT p FROM Post p")
     Page<Post> findAll(Pageable pageable);
 }
