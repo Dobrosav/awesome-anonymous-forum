@@ -53,7 +53,7 @@ public class PostOperationsService {
             result.setSuccess(false);
             result.setMessage("Failed to save post");
             logger.error("Failed to save post with details: {}", postDto.toString().replace("\n", ""));
-        } else{
+        } else {
             result.setSuccess(true);
             result.setMessage("Successfully saved post");
             logger.info("Successfully saved post with details: {}", postDto.toString().replace("\n", ""));

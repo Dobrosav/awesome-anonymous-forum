@@ -22,7 +22,7 @@ public class CommentController {
     }
 
     @PostMapping("/{parentCommentId}/replies")
-    public ResponseEntity<ApiResponseWrapper<Result>> createCommentOnComment(@PathVariable int parentCommentId,@RequestBody @Valid CommentDto commentDto) {
+    public ResponseEntity<ApiResponseWrapper<Result>> createCommentOnComment(@PathVariable int parentCommentId, @RequestBody @Valid CommentDto commentDto) {
         return new ResponseEntity<>(new ApiResponseWrapper<>(commentService.createReplyOnComment(parentCommentId, commentDto)), HttpStatus.CREATED);
     }
 }

@@ -42,8 +42,9 @@ public class PostController {
     public ResponseEntity<ApiResponseWrapper<List>> getPostByAuthor(@PathVariable String authorName) {
         return new ResponseEntity<>(new ApiResponseWrapper<>(postOperationsService.getAllPostByAuthor(authorName)), HttpStatus.OK);
     }
+
     @PostMapping(value = "/{postId}/comments")
-    public ResponseEntity<ApiResponseWrapper<Result>> createCommentOnPost(@PathVariable int postId,@RequestBody @Valid CommentDto commentDto) {
+    public ResponseEntity<ApiResponseWrapper<Result>> createCommentOnPost(@PathVariable int postId, @RequestBody @Valid CommentDto commentDto) {
         return new ResponseEntity<>(new ApiResponseWrapper<>(commentService.createCommentOnPost(postId, commentDto)), HttpStatus.CREATED);
     }
 }
