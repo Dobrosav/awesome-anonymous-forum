@@ -32,7 +32,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @SpringBootTest
 class AwesomeAnonymousForumApplicationTests {
@@ -100,6 +99,7 @@ class AwesomeAnonymousForumApplicationTests {
         assertEquals(posts, result);
         verify(postRepo).findByAuthorName(author);
     }
+
     @Test
     void shouldCreatePostSuccessfullyWithoutIncludeKeanuWhoa() {
         PostDto postDto = new PostDto();
@@ -127,6 +127,7 @@ class AwesomeAnonymousForumApplicationTests {
         assertThrows(ServiceException.class, () -> postOperationsService.getAllPostByAuthor(author));
         verify(postRepo).findByAuthorName(author);
     }
+
     @Test
     void testGetAllPost_EmptyResult() {
         int page = 0;
@@ -168,6 +169,7 @@ class AwesomeAnonymousForumApplicationTests {
         assertThrows(ServiceException.class, () -> commentService.createCommentOnPost(1, commentDto));
         verify(postRepo).findById(1);
     }
+
     @Test
     void createReplyOnComment_ShouldCreateReplySuccessfully() {
         Integer parentCommentId = 1;
