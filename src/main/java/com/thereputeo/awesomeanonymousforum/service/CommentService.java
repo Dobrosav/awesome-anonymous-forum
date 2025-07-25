@@ -47,8 +47,11 @@ public class CommentService {
             result.setSuccess(false);
             result.setMessage("Failed to create comment on post");
             logger.warn("Failed to create comment on post {} with details: {}", postId,commentDto.toString().replace("\n", ""));
+        } else{
+            result.setSuccess(true);
+            result.setMessage("Successfully created comment on post");
+            logger.info("Successfully created comment on post {} with details: {}",postId ,commentDto.toString().replace("\n", ""));
         }
-        logger.info("Successfully created comment on post {} with details: {}",postId ,commentDto.toString().replace("\n", ""));
         return result;
     }
     public Result createReplyOnComment(Integer commentId, CommentDto commentDto) {
@@ -65,15 +68,16 @@ public class CommentService {
         newComment.setContent(commentDto.getContent());
         newComment.setImageUrl(commentDto.getImageUrl());
         newComment.setAuthorName(commentDto.getAuthorName());
-        newComment.setCreatedAt(new Date());
-        result.setSuccess(true);
-        result.setMessage("Successfully created new reply on comment");
+        newComment.setCreatedAt(new Date());;
         if (commentRepo.save(newComment) == null) {
             result.setSuccess(false);
             result.setMessage("Failed to create new reply on comment");
             logger.warn("Failed to create new reply on comment {}  with details: {}", commentId ,commentDto.toString().replace("\n", ""));
+        } else {
+            result.setSuccess(true);
+            result.setMessage("Successfully created new reply on comment");
+            logger.info("Successfully created new reply on comment {} with details: {}", commentId,commentDto.toString().replace("\n", ""));
         }
-        logger.info("Successfully created new reply on comment with details: {}", commentDto.toString().replace("\n", ""));
         return result;
 
     }
