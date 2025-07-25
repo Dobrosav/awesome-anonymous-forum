@@ -11,6 +11,9 @@ import com.thereputeo.awesomeanonymousforum.exception.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -61,9 +64,10 @@ public class PostOperationsService {
         return result;
     }
 
-    public Iterator<Post> getAllPost() {
+    public Page<Post> getAllPost(int page, int size) {
         logger.info("Getting all posts");
-        return postRepo.findAll().iterator();
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepo.findAll(pageable);
     }
 
     public List<Post> getAllPostByAuthor(String authorName) {
