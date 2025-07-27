@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -32,11 +33,10 @@ public class Comment {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @NotNull
-    @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT NULL")
     private Date createdAt;
 
+    @NotNull
     @Column(name = "author", nullable = false)
     private String authorName;
 

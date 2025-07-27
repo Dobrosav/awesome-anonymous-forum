@@ -12,7 +12,11 @@
 	<artifactId>awesome-anonymous-forum</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>awesome-anonymous-forum</name>
-	<description>Demo project for Spring Boot</description>
+	<description>
+    A Spring Boot-based anonymous forum application built with Jakarta EE and Spring Data JPA. 
+    Features include web API endpoints, MySQL database integration, and Hibernate validation. 
+    The application provides a secure platform for anonymous discussions with REST API support.
+</description>
 	<url/>
 	<licenses>
 		<license/>
