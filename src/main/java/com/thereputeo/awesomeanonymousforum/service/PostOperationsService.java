@@ -51,6 +51,7 @@ public class PostOperationsService {
             }
 
         }
+        postRepo.save(post);
         result.setSuccess(true);
         result.setMessage("Successfully saved post");
         logger.info("Successfully saved post with details: {}", postDto.toString().replace("\n", ""));
