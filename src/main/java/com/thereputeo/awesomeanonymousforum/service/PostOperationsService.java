@@ -43,14 +43,16 @@ public class PostOperationsService {
         post.setType(postDto.getPostType().name());
         if (postDto.getIncludeKeanuWhoa()) {
             List<MovieDetail> whoaClientResponse = whoaService.getMovie();
-            if (whoaClientResponse != null && !whoaClientResponse.isEmpty()) {
-                MovieDetail movieDetail = whoaClientResponse.getFirst();
-                post.setAudio(movieDetail.getAudio());
-                post.setPoster(movieDetail.getPoster());
-                post.setVideo(movieDetail.getVideo().get_1080p());
+            if (whoaClientResponse == null || whoaClientResponse.isEmpty()) {
+                logger.warn("whoa client is not available");
+                throw new ServiceException(ErrorType.CLIENT_NOT_AVAILABLE, HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
+            MovieDetail movieDetail = whoaClientResponse.getFirst();
+            post.setAudio(movieDetail.getAudio());
+            post.setPoster(movieDetail.getPoster());
+            post.setVideo(movieDetail.getVideo().get_1080p());
         }
+        postRepo.save(post);
         result.setSuccess(true);
         result.setMessage("Successfully saved post");
         logger.info("Successfully saved post with details: {}", postDto.toString().replace("\n", ""));
