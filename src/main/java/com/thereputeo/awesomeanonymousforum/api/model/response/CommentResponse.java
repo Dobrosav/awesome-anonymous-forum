@@ -1,13 +1,18 @@
 package com.thereputeo.awesomeanonymousforum.api.model.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentResponse implements Serializable {
     private Integer id;
     private String content;
     private String authorName;
     private String imageUrl;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
     private Integer postId;
     private Integer parentCommentId;

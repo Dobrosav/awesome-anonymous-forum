@@ -1,12 +1,14 @@
 package com.thereputeo.awesomeanonymousforum.service;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
+import com.thereputeo.awesomeanonymousforum.api.model.response.CommentResponse;
 import com.thereputeo.awesomeanonymousforum.database.entity.Comment;
 import com.thereputeo.awesomeanonymousforum.database.entity.Post;
 import com.thereputeo.awesomeanonymousforum.database.repository.CommentRepo;
 import com.thereputeo.awesomeanonymousforum.database.repository.PostRepo;
 import com.thereputeo.awesomeanonymousforum.exception.ErrorType;
 import com.thereputeo.awesomeanonymousforum.exception.ServiceException;
+import com.thereputeo.awesomeanonymousforum.mapper.CommentMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,9 @@ public class CommentService {
 
     private final PostRepo postRepo;
     private final CommentRepo commentRepo;
-    private final com.thereputeo.awesomeanonymousforum.mapper.CommentMapper commentMapper;
+    private final CommentMapper commentMapper;
 
-    public CommentService(PostRepo postRepo, CommentRepo commentRepo, com.thereputeo.awesomeanonymousforum.mapper.CommentMapper commentMapper) {
+    public CommentService(PostRepo postRepo, CommentRepo commentRepo, CommentMapper commentMapper) {
         this.postRepo = postRepo;
         this.commentRepo = commentRepo;
         this.commentMapper = commentMapper;
@@ -43,7 +45,7 @@ public class CommentService {
         return commentMapper.toResponse(savedComment);
     }
 
-    public com.thereputeo.awesomeanonymousforum.api.model.response.CommentResponse createReplyOnComment(Integer commentId, CommentDto commentDto) {
+    public CommentResponse createReplyOnComment(Integer commentId, CommentDto commentDto) {
         Comment parentcomment = commentRepo.findById(commentId).orElse(null);
         if (parentcomment == null) {
             logger.warn("No parent comment found for id:{}", commentId);

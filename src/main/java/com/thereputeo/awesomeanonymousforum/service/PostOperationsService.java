@@ -2,7 +2,6 @@ package com.thereputeo.awesomeanonymousforum.service;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.PostDto;
 import com.thereputeo.awesomeanonymousforum.api.model.response.PostResponse;
-import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoaService;
 import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
 import com.thereputeo.awesomeanonymousforum.database.entity.Post;
@@ -40,9 +39,9 @@ public class PostOperationsService {
 
     public PostResponse createPost(PostDto postDto) {
         logger.info("Creating post with details: {}", postDto.toString().replace("\n", ""));
-        
+
         Post post = postMapper.toEntity(postDto);
-        
+
         if (Boolean.TRUE.equals(postDto.getIncludeKeanuWhoa())) {
             List<MovieDetail> whoaClientResponse = whoaService.getMovie();
             if (whoaClientResponse == null || whoaClientResponse.isEmpty()) {
@@ -54,7 +53,7 @@ public class PostOperationsService {
             post.setPoster(movieDetail.getPoster());
             post.setVideo(movieDetail.getVideo().get_1080p());
         }
-        
+
         Post savedPost = postRepo.save(post);
         logger.info("Successfully saved post with id: {}", savedPost.getId());
         return postMapper.toResponse(savedPost);
