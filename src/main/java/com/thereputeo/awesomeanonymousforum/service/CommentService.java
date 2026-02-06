@@ -1,7 +1,6 @@
 package com.thereputeo.awesomeanonymousforum.service;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
-import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.database.entity.Comment;
 import com.thereputeo.awesomeanonymousforum.database.entity.Post;
 import com.thereputeo.awesomeanonymousforum.database.repository.CommentRepo;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 
 @Service
 public class CommentService {
@@ -22,53 +20,44 @@ public class CommentService {
 
     private final PostRepo postRepo;
     private final CommentRepo commentRepo;
+    private final com.thereputeo.awesomeanonymousforum.mapper.CommentMapper commentMapper;
 
-    public CommentService(PostRepo postRepo, CommentRepo commentRepo) {
+    public CommentService(PostRepo postRepo, CommentRepo commentRepo, com.thereputeo.awesomeanonymousforum.mapper.CommentMapper commentMapper) {
         this.postRepo = postRepo;
         this.commentRepo = commentRepo;
+        this.commentMapper = commentMapper;
     }
 
-    public Result createCommentOnPost(Integer postId, CommentDto commentDto) {
-        Result result = new Result();
+    public com.thereputeo.awesomeanonymousforum.api.model.response.CommentResponse createCommentOnPost(Integer postId, CommentDto commentDto) {
         Post post = postRepo.findById(postId).orElse(null);
         if (post == null) {
             logger.warn("No post found for id:{}", postId);
             throw new ServiceException(ErrorType.NOT_FOUND_POST, HttpStatus.NOT_FOUND);
         }
-        Comment comment = new Comment();
-        comment.setParentComment(null);
+        Comment comment = commentMapper.toEntity(commentDto);
         comment.setPost(post);
-        comment.setContent(commentDto.getContent());
-        comment.setImageUrl(commentDto.getImageUrl());
-        comment.setAuthorName(commentDto.getAuthorName());
-        comment.setCreatedAt(new Date());
-        result.setSuccess(true);
-        result.setMessage("Successfully created comment on post");
-        commentRepo.save(comment);
+        comment.setParentComment(null);
+
+        Comment savedComment = commentRepo.save(comment);
         logger.info("Successfully created comment on post {} with details: {}", postId, commentDto.toString().replace("\n", ""));
-        return result;
+        return commentMapper.toResponse(savedComment);
     }
 
-    public Result createReplyOnComment(Integer commentId, CommentDto commentDto) {
-        Result result = new Result();
+    public com.thereputeo.awesomeanonymousforum.api.model.response.CommentResponse createReplyOnComment(Integer commentId, CommentDto commentDto) {
         Comment parentcomment = commentRepo.findById(commentId).orElse(null);
         if (parentcomment == null) {
             logger.warn("No parent comment found for id:{}", commentId);
             throw new ServiceException(ErrorType.NOT_FOUND_COMMENT, HttpStatus.NOT_FOUND);
         }
         Post post = parentcomment.getPost();
-        Comment newComment = new Comment();
+        Comment newComment = commentMapper.toEntity(commentDto);
         newComment.setParentComment(parentcomment);
         newComment.setPost(post);
-        newComment.setContent(commentDto.getContent());
-        newComment.setImageUrl(commentDto.getImageUrl());
-        newComment.setAuthorName(commentDto.getAuthorName());
-        newComment.setCreatedAt(new Date());
-        commentRepo.save(newComment);
-        result.setSuccess(true);
-        result.setMessage("Successfully created new reply on comment");
+
+        Comment savedComment = commentRepo.save(newComment);
         logger.info("Successfully created new reply on comment {} with details: {}", commentId, commentDto.toString().replace("\n", ""));
-        return result;
+        return commentMapper.toResponse(savedComment);
 
     }
+
 }

@@ -2,9 +2,8 @@ package com.thereputeo.awesomeanonymousforum.api;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
 import com.thereputeo.awesomeanonymousforum.api.model.request.PostDto;
-import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
-import com.thereputeo.awesomeanonymousforum.database.entity.Post;
-import com.thereputeo.awesomeanonymousforum.model.ApiResponseWrapper;
+import com.thereputeo.awesomeanonymousforum.api.model.response.CommentResponse;
+import com.thereputeo.awesomeanonymousforum.api.model.response.PostResponse;
 import com.thereputeo.awesomeanonymousforum.service.CommentService;
 import com.thereputeo.awesomeanonymousforum.service.PostOperationsService;
 import jakarta.validation.Valid;
@@ -30,22 +29,23 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseWrapper<Result>> createPost(@RequestBody @Valid PostDto postDto) {
-        return new ResponseEntity<>(new ApiResponseWrapper<>(postOperationsService.createPost(postDto)), HttpStatus.CREATED);
+    public ResponseEntity<PostResponse> createPost(@RequestBody @Valid PostDto postDto) {
+        return new ResponseEntity<>(postOperationsService.createPost(postDto), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponseWrapper<Page<Post>>> getAllPost(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
-        return new ResponseEntity<>(new ApiResponseWrapper<>(postOperationsService.getAllPost(page, size)), HttpStatus.OK);
+    public ResponseEntity<Page<PostResponse>> getAllPost(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        return new ResponseEntity<>(postOperationsService.getAllPost(page, size), HttpStatus.OK);
     }
 
     @GetMapping("by-author/{authorName}")
-    public ResponseEntity<ApiResponseWrapper<List>> getPostByAuthor(@PathVariable String authorName) {
-        return new ResponseEntity<>(new ApiResponseWrapper<>(postOperationsService.getAllPostByAuthor(authorName)), HttpStatus.OK);
+    public ResponseEntity<Page<PostResponse>> getPostByAuthor(@PathVariable String authorName, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        return new ResponseEntity<>(postOperationsService.getAllPostByAuthor(authorName, page, size), HttpStatus.OK);
     }
 
     @PostMapping(value = "/{postId}/comments")
-    public ResponseEntity<ApiResponseWrapper<Result>> createCommentOnPost(@PathVariable int postId, @RequestBody @Valid CommentDto commentDto) {
-        return new ResponseEntity<>(new ApiResponseWrapper<>(commentService.createCommentOnPost(postId, commentDto)), HttpStatus.CREATED);
+    public ResponseEntity<CommentResponse> createCommentOnPost(@PathVariable int postId, @RequestBody @Valid CommentDto commentDto) {
+        return new ResponseEntity<>(commentService.createCommentOnPost(postId, commentDto), HttpStatus.CREATED);
     }
 }
+

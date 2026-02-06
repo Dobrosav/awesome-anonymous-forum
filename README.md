@@ -1,78 +1,117 @@
 # Awesome Anonymous Forum
 
-A Spring Boot application for an anonymous forum system with MySQL database support.
+A robust, "medior-level" Spring Boot application designed for anonymous discussions. This project demonstrates modern software engineering practices, including clean architecture, DTO pattern usage, automated mapping with MapStruct, and integration testing with TestContainers.
 
-## Prerequisites
+## 🚀 Key Features
 
-- Docker and Docker Compose
-- Java Development Kit (JDK) 21 or later
-- Maven
+*   **Anonymous Posting**: Create posts and comments without registration.
+*   **Multimedia Support**: Posts can include text, external links, and optional "Keanu Whoa" multimedia content via external API integration.
+*   **Nested Comments**: Support for comments and replies.
+*   **Modern Architecture**: Separation of concerns using Controller, Service, Repository layers, and strict DTO/Entity mapping.
+*   **Containerized Environment**: Fully dockerized setup for application and database.
 
-## Environment Variables
+## 🛠 Tech Stack
 
-Before running the application, create a `.env` file in the root directory with the following variables:
+*   **Java**: 21
+*   **Framework**: Spring Boot 3.5.3
+*   **Database**: MySQL 8.0.33
+*   **ORM**: Spring Data JPA / Hibernate
+*   **Mapping**: MapStruct 1.5.5.Final
+*   **Testing**: JUnit 5, Mockito, TestContainers (for integration tests)
+*   **Containerization**: Docker & Docker Compose
+*   **Build Tool**: Maven
 
-## Building the Application
+## 🏗 Architecture
 
-1. Build the application using Maven:
+The project follows a layered architecture to ensure maintainability and testability:
 
-## Running with Docker Compose
+1.  **API Layer (`api`)**: REST Controllers that handle HTTP requests. They consume and return **DTOs** (`Request` objects and `Response` objects), never exposing database entities directly.
+2.  **Service Layer (`service`)**: Contains business logic. Uses **Mappers** to convert between DTOs and Entities.
+3.  **Data Access Layer (`database`)**: Spring Data JPA Repositories for database interactions.
+4.  **Mapper Layer (`mapper`)**: **MapStruct** interfaces that define how to map between DTOs and Entities, reducing boilerplate code.
 
-1. Start the application and database:
-This will:
-- Start a MySQL 8.0.33 database container
-- Build and start the Spring Boot application
-- Connect the application to the database
+## 📋 Prerequisites
 
-2. To stop the application:
-Add `-v` flag to remove the volumes when stopping:
+*   **Java JDK 21**
+*   **Maven** (3.8+)
+*   **Docker** & **Docker Compose**
 
-## Accessing the Application
+## 🏃‍♂️ Running the Application
 
-The application will be available at:
-- Base URL: `http://localhost:11050`
+### Option 1: Using Docker Compose (Recommended)
 
-## Database
+This is the easiest way to run the full stack (App + Database).
 
-- Database Port: 3306
-- Username: root
-- Password: (as specified in .env file)
-- Database Name: (as specified in .env file)
+1.  Build the application:
+    ```bash
+    mvn clean package -DskipTests
+    ```
 
-## Configuration
+2.  Start the services:
+    ```bash
+    docker compose up --build
+    ```
 
-The application uses the following configuration:
+The application will be available at `http://localhost:11050`.
 
-- Server port: 11050
-- Database: MySQL with automatic schema update (hibernate.ddl-auto=update)
-- External service: Whoa client integration
+### Option 2: Running Locally with Maven
 
-## Container Health Checks
+If you want to run the app locally (e.g., for debugging), ensure you have a MySQL database running on port `3306` (or configure `application.properties`).
 
-The MySQL container includes health checks to ensure the database is ready before the application starts. The health check:
-- Retries up to 10 times
-- Checks every 3 seconds
-- Times out after 30 seconds
+```bash
+mvn spring-boot:run
+```
 
-## Volumes
+## 🧪 Testing
 
-The application uses a persistent volume for MySQL data storage:
-- Volume name: mysql-data
-- Mount point: /var/lib/mysql
+This project uses **TestContainers** to run integration tests against a real, throwaway MySQL Docker container. This ensures that tests are reliable and environment-independent.
 
-## Networks
+To run the tests:
 
-All services run on a dedicated network:
-- Network name: springboot-mysql-network
+```bash
+mvn test
+```
 
-## Troubleshooting
+*Note: You need a running Docker daemon for TestContainers to work.*
 
-1. If the application fails to start, check:
-   - Docker logs: `docker compose logs`
-   - Database connectivity: `docker compose logs mysqldb`
-   - Application logs: `docker compose logs app`
+## 🔌 API Endpoints
 
-2. To reset the database:
-   - Stop the containers: `docker compose down`
-   - Remove the volume: `docker volume rm mysql-data`
-   - Restart: `docker compose up -d`
+### Posts
+
+*   **Create Post**: `POST /posts`
+    *   Body: `{ "content": "...", "authorName": "...", "postType": "PLAIN_TEXT" }`
+*   **Get All Posts**: `GET /posts?page=0&size=10`
+*   **Get Posts by Author**: `GET /posts/by-author/{authorName}`
+
+### Comments
+
+*   **Comment on Post**: `POST /posts/{postId}/comments`
+    *   Body: `{ "content": "...", "authorName": "..." }`
+*   **Reply to Comment**: `POST /comments/{parentCommentId}/replies`
+    *   Body: `{ "content": "...", "authorName": "..." }`
+
+### Swagger UI (API Documentation)
+
+You can view and test the API using the built-in Swagger UI:
+
+*   **URL**: `http://localhost:11050/swagger-ui/index.html`
+*   **OpenAPI JSON**: `http://localhost:11050/v3/api-docs`
+
+## 📁 Project Structure
+
+```text
+src/main/java/com/thereputeo/awesomeanonymousforum
+├── api                  # REST Controllers & Request/Response Models
+│   ├── model
+│   │   ├── request      # Input DTOs
+│   │   └── response     # Output DTOs
+│   ├── CommentController.java
+│   └── PostController.java
+├── client               # External API Clients (WhoaService)
+├── database             # Entities & Repositories
+│   ├── entity
+│   └── repository
+├── exception            # Global Error Handling
+├── mapper               # MapStruct Interfaces
+└── service              # Business Logic
+```

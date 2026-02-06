@@ -1,9 +1,9 @@
 package com.thereputeo.awesomeanonymousforum.exception;
 
 import com.thereputeo.awesomeanonymousforum.model.ApiErrorResponse;
-import com.thereputeo.awesomeanonymousforum.model.ApiResponseWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -30,56 +30,57 @@ public class ApiGlobalErrorHandler {
     @ResponseBody
     protected ResponseEntity handleServiceException(ServiceException ex) {
         LOG.warn("ServiceException occurred:{},code-{}", ex.getErrorType(), ex.getErrorType().getCode());
-        return new ResponseEntity(new ApiResponseWrapper<>(new ApiErrorResponse(ex.getHttpCode().value() + "." + "001" + "." + ex.getErrorType().getCode(), ex.getErrorType().getMessage())), ex.getHttpCode());
+        return new ResponseEntity(new ApiErrorResponse(ex.getHttpCode().value() + "." + "001" + "." + ex.getErrorType().getCode(), ex.getErrorType().getMessage()), ex.getHttpCode());
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    protected ApiResponseWrapper handleNoHandlerFoundException(NoHandlerFoundException ex) {
-        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001" + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage()));
+    protected ApiErrorResponse handleNoHandlerFoundException(NoHandlerFoundException ex) {
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001" + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage());
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    protected ApiResponseWrapper handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.BAD_REQUEST.value() + "." + "001" + "." + ErrorType.NOT_SUPPORTED_HTTP_METHOD.getCode(), ErrorType.NOT_SUPPORTED_HTTP_METHOD.getMessage() + ":" + ex.getMessage()));
+    protected ApiErrorResponse handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST.value() + "." + "001" + "." + ErrorType.NOT_SUPPORTED_HTTP_METHOD.getCode(), ErrorType.NOT_SUPPORTED_HTTP_METHOD.getMessage() + ":" + ex.getMessage());
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    protected ApiResponseWrapper handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        return new ApiResponseWrapper(new ApiErrorResponse(HttpStatus.BAD_REQUEST.value() + "." + "001" + "." + ErrorType.NOT_VALID_REQUEST_FORMAT.getCode(), ErrorType.NOT_VALID_REQUEST_FORMAT.getMessage() + ":" + ex.getMessage()));
+    protected ApiErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST.value() + "." + "001" + "." + ErrorType.NOT_VALID_REQUEST_FORMAT.getCode(), ErrorType.NOT_VALID_REQUEST_FORMAT.getMessage() + ":" + ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    protected ApiResponseWrapper handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+    protected ApiErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
         LOG.warn("Bad request occured,fields:{} not valid", ex.getBindingResult().getFieldErrors());
         List<FieldError> bindingResult = ex.getBindingResult().getFieldErrors();
         StringJoiner errorFields = new StringJoiner(",");
         for (FieldError error : bindingResult) {
             errorFields.add(error.getField());
         }
-        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.BAD_REQUEST.value() + "." + "001" + "." + ErrorType.INVALID_ARGUMENT.getCode(), ErrorType.INVALID_ARGUMENT.getMessage() + ":" + errorFields));
+        return new ApiErrorResponse(HttpStatus.BAD_REQUEST.value() + "." + "001" + "." + ErrorType.INVALID_ARGUMENT.getCode(), ErrorType.INVALID_ARGUMENT.getMessage() + ":" + errorFields);
     }
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    protected ApiResponseWrapper handleRuntimeException(RuntimeException ex) {
+    protected ApiErrorResponse handleRuntimeException(RuntimeException ex) {
         LOG.error("Occurred unexpected error", ex);
-        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001" + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage()));
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001" + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    protected ApiResponseWrapper handleException(Exception ex) {
+    protected ApiErrorResponse handleException(Exception ex) {
         LOG.error("Occurred unexpected error", ex);
-        return new ApiResponseWrapper<>(new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001 " + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage()));
+        return new ApiErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value() + "." + "001 " + "." + ErrorType.UNRESOLVED_ERROR.getCode(), ErrorType.UNRESOLVED_ERROR.getMessage());
     }
+
 }
