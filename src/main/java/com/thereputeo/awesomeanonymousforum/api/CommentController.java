@@ -1,10 +1,10 @@
 package com.thereputeo.awesomeanonymousforum.api;
 
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
-import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
-import com.thereputeo.awesomeanonymousforum.model.ApiResponseWrapper;
+import com.thereputeo.awesomeanonymousforum.api.model.response.CommentResponse;
 import com.thereputeo.awesomeanonymousforum.service.CommentService;
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,8 @@ public class CommentController {
     }
 
     @PostMapping("/{parentCommentId}/replies")
-    public ResponseEntity<ApiResponseWrapper<Result>> createCommentOnComment(@PathVariable int parentCommentId, @RequestBody @Valid CommentDto commentDto) {
-        return new ResponseEntity<>(new ApiResponseWrapper<>(commentService.createReplyOnComment(parentCommentId, commentDto)), HttpStatus.CREATED);
+    public ResponseEntity<CommentResponse> createCommentOnComment(@PathVariable int parentCommentId, @RequestBody @Valid CommentDto commentDto) {
+        return new ResponseEntity<>(commentService.createReplyOnComment(parentCommentId, commentDto), HttpStatus.CREATED);
     }
 }
+
