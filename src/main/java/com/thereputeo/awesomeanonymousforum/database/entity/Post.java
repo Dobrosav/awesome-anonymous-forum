@@ -17,27 +17,21 @@ public class Post {
     @Column(name = "text", nullable = false)
     private String text;
 
-    @Lob
     @Column(name = "type", nullable = false)
     private String type;
 
-    @Lob
     @Column(name = "poster")
     private String poster;
 
-    @Lob
     @Column(name = "link")
     private String link;
 
-    @Lob
     @Column(name = "video")
     private String video;
 
-    @Lob
     @Column(name = "audio")
     private String audio;
 
-    @Lob
     @Column(name = "author_name", nullable = false)
     private String authorName;
 

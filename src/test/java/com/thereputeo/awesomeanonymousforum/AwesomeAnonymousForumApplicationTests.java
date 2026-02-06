@@ -3,7 +3,6 @@ package com.thereputeo.awesomeanonymousforum;
 import com.thereputeo.awesomeanonymousforum.api.model.request.CommentDto;
 import com.thereputeo.awesomeanonymousforum.api.model.request.PostDto;
 import com.thereputeo.awesomeanonymousforum.api.model.response.PostResponse;
-import com.thereputeo.awesomeanonymousforum.api.model.response.Result;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoaService;
 import com.thereputeo.awesomeanonymousforum.client.whoa.WhoabInterface;
 import com.thereputeo.awesomeanonymousforum.client.whoa.model.MovieDetail;
